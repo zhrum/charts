@@ -31,6 +31,11 @@ spec:
         )
       record: namespace_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate
     - expr: |-
+        sum by (node, pod_name, container_name) (
+          rate(container_cpu_usage_seconds_total{job="kubelet", image!="", container_name!=""}[5m])
+        )
+      record: node_pod_name_container_name:container_cpu_usage_seconds_total:sum_rate
+    - expr: |-
         sum by(namespace) (
             kube_pod_container_resource_requests_memory_bytes{job="kube-state-metrics"}
           * on (endpoint, instance, job, namespace, pod, service)
